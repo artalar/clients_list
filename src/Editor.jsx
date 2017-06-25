@@ -2,100 +2,176 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 
 
-const Editor = styled.div`
+const EditorStyleClose = styled.div`
+	overflow: hidden;
+	.close {
+		top: -160px;
+		height: 0px;
+		opacity: 0;
+		transition: all .4s ease;
+	}
+`;
+
+const EditorStyle = styled.form`
+	position: relative;
 	display: flex;
-	flex-direction: row;
+	flex-wrap: wrap;
+	top: 0px;
+	height: 160px;
 	margin-top: 10px;
 	font-size: 0.6rem;
 	color: gray;
-	.NameAndEmail {
-		display: flex;
-		flex-direction: column;
-		margin-right: 30px;
-	}
-	.PhoneAndSave {
-		display: flex;
-		flex-direction: column;
-	}
+	opacity: 1;
+	transition: all .4s ease;
 `;
 
 const Field = styled.div`
 	display: flex;
 	flex-direction: column;
-	> div {
-		display: flex;
-		align-items: center;
-		width: 500px;
-		height: 30px;
-		margin: 8px 0;
-		padding: 0 10px;
-		border: 1px solid gray;
-		border-radius: 13px;
-		background-color: #FFF;
-		> input {
-			width: 96%;
-			border: none;
-			background-color: rgba(0,0,0,0);
-			z-index: 1;
-			:focus { outline: none; }
-		}
+	.phoneNumber {
+		width: 325px;
+		margin: 8px 0px;
+	}
+`;
+
+const Input = styled.div`
+	display: flex;
+	align-items: center;
+	width: 600px;
+	height: 30px;
+	margin: 8px 30px 8px 0px;
+	padding: 0 10px;
+	border: 1px solid lightgray;
+	border-radius: 13px;
+	background-color: #FFF;
+	> input {
+		width: 96%;
+		border: none;
+		background-color: rgba(0,0,0,0);
+		z-index: 1;
+		:focus { outline: none; }
 	}
 `;
 
 const HidenText = styled.span`
 	position: absolute;
 	font-size: 0.8rem;
-`
+`;
 
-export default class Counter extends Component {
-	constructor(props) {
-		super(props);
+const Submit = styled.button`
+	height: 32px;
+	margin-top: 19px;
+	padding: 0px 20px;
+	border: 0px solid;
+	border-radius: 15px;
+	background-color: #b51212;
+	color: white;
+	font-weight: bold;
+	cursor: pointer;
+	:focus { outline: none; }
+	:active { background-color: #8a0f0f; }
+`;
+
+const Footer = styled.div`
+	display: flex;
+	justify-content: space-between;
+	width: 100%;
+	border-bottom: 1px solid lightgray;
+	i {
+		cursor: pointer;
+	}
+`;
+
+
+export default class Editor extends Component {
+	constructor() {
+		super();
 		this.state = {
-			name: '',
-			phoneNumber: '',
-			eMail: ''
+			user: {
+				name: '',
+				phoneNumber: '',
+				email: '',
+			},
 		};
+	};
+
+	componentWillReceiveProps({editableUser}){
+		if (!editableUser) return;
+		const { name, phoneNumber, email } = editableUser;
+		this.setState({
+			user: {
+				name: name || '',
+				phoneNumber: phoneNumber || '',
+				email: email || '',
+			},
+		})
 	}
 
 	onInput = ({target}) => {
 		this.setState({
-			[target.id]: target.value
+			user:{
+				...this.state.user,
+				[target.id]: target.value,
+			}
 		})
-	}
+	};
+
+	onSave = (e) => {
+		e.preventDefault();
+		this.props.onEditorSubmit(this.state.user);
+	};
+
 	render() {
+		const { name, phoneNumber, email } = this.state.user;
 		return (
-			<Editor>
-				<div id='NameAndEmail'>
+			<EditorStyleClose ref='Editor'>
+				<EditorStyle onSubmit={this.onSave} className={!this.props.isOpen ? 'close' : ''}>
 					<Field>
 						Имя
-						<div>
-							<input id='name' onChange={this.onInput}></input>
-							{!this.state.name.length
+						<Input>
+							<input
+								id='name'
+								onChange={this.onInput}
+								value={name}
+							></input>
+							{!name.length
 								? <HidenText>Иванов Иван Иванович</HidenText>
 								: null
 							}
-						</div>
+						</Input>
 					</Field>
 					<Field>
+						Телефон
+						<Input className='phoneNumber'>
+							<input
+								id ='phoneNumber'
+								onChange={this.onInput}
+								value={phoneNumber}	
+							></input>
+						</Input>
+					</Field>
+
+					<Field>
 						E-Mail
-						<div>
-							<input id='eMail' onChange={this.onInput}></input>
-							{!this.state.eMail.length
+						<Input>
+							<input
+								id='email'
+								onChange={this.onInput}
+								value={email}	
+							></input>
+							{!email.length
 								? <HidenText>name@address.ru</HidenText>
 								: null
 							}
-						</div>
+						</Input>
 					</Field>
-				</div>
-				<div id='PhoneAndSave'>
-					<Field>
-						Телефон
-						<div>
-							<input onChange={this.onInput}></input>
-						</div>
-					</Field>
-				</div>
-			</Editor>
+					<Submit onClick={this.onSave}>Сохранить</Submit>
+					<Footer>
+						<i className="material-icons" onClick={this.props.onCloseEditor}>keyboard_arrow_up</i>
+						<i className="material-icons" onClick={this.props.onCloseEditor}>keyboard_arrow_up</i>
+					</Footer>
+				</EditorStyle>
+			</EditorStyleClose>
 		)
 	}
 }

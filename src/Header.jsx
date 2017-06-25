@@ -12,21 +12,22 @@ const AddClien = styled.div`
 	cursor: pointer;
 	font-size: 0.7rem;
 	font-weight: bold;
-	> i {
+	i {
 		margin-right: 5px;
 	}
 `;
 
-export default ({ onAddClient }) => {
+export default ({ openEditor }) => {
+	const addClient = () => openEditor()
 	return (
 		<StyledHead>
 			<div>
 				<strong>Клиенты</strong>
-				<AddClien onClick={onAddClient}>
+				<AddClien onClick={addClient}>
 					<i className="material-icons">add_circle</i>Добавить клиента
 				</AddClien>
 			</div>
-			<i className="material-icons">clear</i>
+			<i className="material-icons">clear</i> {/*я не понял зачем это на макете*/}
 		</StyledHead>
 	);
 }
