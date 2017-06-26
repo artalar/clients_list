@@ -47,7 +47,7 @@ export default ({list, onEditUser, onDeliteUser}) => {
 				<th>Дата<br/>последнего<br/>посещения</th>
 				<th>Сумма оплат</th>
 				<th>Количество<br/>посещений</th>
-				<th>Активный<br/>абонимент</th>
+				<th>Активный<br/>абонемент</th>
 			</tr>
 			{list.map((user, index) => (
 				<tr key={`${index}${user.email}`}>
